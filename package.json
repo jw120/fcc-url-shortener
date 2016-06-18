@@ -1,11 +1,11 @@
 {
-  "name": "timestamp",
+  "name": "url-shortener",
   "version": "1.0.0",
-  "description": "Timestamp microservice exercise for FreeCodeCamp",
-  "main": "src/server.js",
+  "description": "URL shortener exercise for FreeCodeCamp",
+  "main": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jw120/fcc-timestamp"
+    "url": "git+https://github.com/jw120/fcc-url-shortener"
   },
   "scripts": {
     "// Development build/test/run": "",
