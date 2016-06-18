@@ -1,0 +1,47 @@
+{
+  "name": "timestamp",
+  "version": "1.0.0",
+  "description": "Timestamp microservice exercise for FreeCodeCamp",
+  "main": "src/server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jw120/fcc-timestamp"
+  },
+  "scripts": {
+    "// Development build/test/run": "",
+    "lint": "tslint -c tslint.json src/*.ts test/*.ts",
+    "compile": "tsc",
+    "test": "mocha test/*_spec.js",
+    "test:watch": "npm run test -- --watch",
+    "src-start": "node src/index.js",
+    "// Build a deployable version locally and test by running with node": "",
+    "build:static": "for f in static/*; do cp $f deploy/${f#static/deploy-}; done",
+    "build:src": "cp src/*.js src/*.html deploy/",
+    "build": "npm run build:src && npm run build:static",
+    "build-start": "node deploy/index.js",
+    "build-test": "SERVER=http://localhost:8080 mocha test/server_spec.js",
+    "// Use the deployable version locally with the heroku cli tool": "",
+    "local-install": "cd deploy && npm install",
+    "local-start": "cd deploy && heroku local",
+    "local-logs": "cd deploy && heroku logs",
+    "local-test": "SERVER=http://localhost:5000 mocha test/server_spec.js",
+    "// Deploy on Heroku": "",
+    "deploy:commit": "cd deploy; if [[ `git status --porcelain` ]]; then git add `find . -maxdepth 1 -type f` && git commit -m 'pushing updates from parent'; fi",
+    "deploy:push": "cd deploy && git push heroku master",
+    "deploy": "npm run deploy:commit && npm run deploy:push",
+    "deploy-test": "SERVER=https://`(cd deploy; heroku domains | tail +2  | head -n 1)` npm run test"
+  },
+  "author": "JW",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.13.4",
+    "express-handlebars": "^3.0.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "isomorphic-fetch": "^2.2.1",
+    "mocha": "^2.5.3",
+    "tslint": "next",
+    "typescript": "next"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "timestamp",
+  "dependencies": {
+    "chai": "registry:npm/chai#3.5.0+20160415060238"
+  },
+  "globalDependencies": {
+    "express": "registry:dt/express#4.0.0+20160317120654",
+    "express-handlebars": "registry:dt/express-handlebars#0.0.0+20160316155526",
+    "express-serve-static-core": "registry:dt/express-serve-static-core#0.0.0+20160602151406",
+    "isomorphic-fetch": "registry:dt/isomorphic-fetch#0.0.0+20160524142046",
+    "mime": "registry:dt/mime#0.0.0+20160316155526",
+    "mocha": "registry:dt/mocha#2.2.5+20160317120654",
+    "node": "registry:dt/node#6.0.0+20160613154055",
+    "serve-static": "registry:dt/serve-static#0.0.0+20160606155157"
+  }
+}
