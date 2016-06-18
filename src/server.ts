@@ -14,7 +14,12 @@ export function startServer(port: number): Server {
 
   const router: Express.Router = Express.Router();
   router.get("/", function (req: Express.Request, res: Express.Response): void {
-    res.render("root");
+    res.render("root", {
+      title: "FreeCodeCamp URL Shortener Exercise",
+      serverURL: process.env.SERVER_URL || "server",
+      exampleURL: "https://freecodecamp/com",
+      exampleShort: "XYZ"
+    });
   });
 
   app.use("/", router);

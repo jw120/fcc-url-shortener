@@ -1,1 +1,36 @@
-<h1>Example App: Home</h1>
+<h1>FreeCodeCamp Back End Exercise: URL shortener microservice</h1>
+
+<h2>Spec (&ldquo;User stories&rdquo;)</h2>
+User stories:
+<ol>
+    <li>
+      I can pass a URL as a parameter and I will receive a shortened URL in the JSON response.
+    </li>
+    <li>
+      When I visit that shortened URL, it will redirect me to my original link.
+    </li>
+</ol>
+
+<h2>Example</h2>
+Visiting <a href="/new/{{exampleURL}}">{{serverURL}}/new/{{exampleURL}}</a> should return
+the shortened link in JSON form
+<pre>
+{ "original_url":"{{exampleURL}}", "short_url":"{{serverURL}}/{{exampleShort}}" }
+</pre>
+and then visting <a href="{{serverURL}}/{{exampleShort}}">{{serverURL}}/{{exampleShort}}</a> should redirect to
+{{exampleURL}}.
+
+<h2>References</h2>
+<ul>
+    <li>
+        FreeCodeCamp's <a href="https://www.freecodecamp.com/challenges/url-shortener-microservice">description</a>
+        of this exercise
+    </li>
+    <li>
+        FreeCodeCamp's <a href="https://little-url.herokuapp.com/">implementation</a>
+    </li>
+    <li>
+        <a href="https://github.com/jw120/fcc-url-shortener">Source code</a> for this implementation
+    </li>
+</ul>
+
