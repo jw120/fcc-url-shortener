@@ -8,6 +8,10 @@ Testing with Mocha, Chai/Expect and Fetch.
 
 * DONE Get root page rendering with handlebars (to show nice urls to our app)
 * TODO Get working with a global variable instead of db
+
+  + DONE new route
+  + TODO re-direct
+
 * TODO Change root page rendering to use real example shortened URL
 * TODO Get working with local pg
 * TODO Add to heroku including config variable to hold SERVER_URL (and support heroku local)
