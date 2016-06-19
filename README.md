@@ -7,12 +7,14 @@ Testing with Mocha, Chai/Expect and Fetch.
 ## Plan of attack
 
 * DONE Get root page rendering with handlebars (to show nice urls to our app)
-* TODO Get working with a global variable instead of db
+* DONE Get working with a global variable instead of db
 
   + DONE new route
-  + TODO re-direct
+  + DONE re-direct
+  + DONE invalid URL page
 
-* TODO Change root page rendering to use real example shortened URL
+* TODO Server tests
+* DONE Change root page rendering to use real example shortened URL
 * TODO Get working with local pg
 * TODO Add to heroku including config variable to hold SERVER_URL (and support heroku local)
 * TODO Add additional API - delete and list shorturls?
