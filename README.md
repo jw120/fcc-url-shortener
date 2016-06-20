@@ -7,18 +7,25 @@ Testing with Mocha, Chai/Expect and Fetch.
 ## Plan of attack
 
 * DONE Get root page rendering with handlebars (to show nice urls to our app)
+* DONE Change root page rendering to use real example shortened URL
 * DONE Get working with a global variable instead of db
 
   + DONE new route
   + DONE re-direct
   + DONE invalid URL page
 
+* TODO Use debug instead of console
 * TODO Server tests
-* DONE Change root page rendering to use real example shortened URL
+
+  + DONE What should return value be for invalid/missing,
+  + TODO Test valid functionality
+  + TODO Avoid repitition in test fetching?
+
+* TODO Make invalid page prettier
 * TODO Get working with local pg
 * TODO Add to heroku including config variable to hold SERVER_URL (and support heroku local)
 * TODO Add additional API - delete and list shorturls?
-
+* TODO Migrate from typings to npm (are all available?)
 
 ## Ways to run
 

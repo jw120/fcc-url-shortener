@@ -41,7 +41,7 @@ export function startServer(port: number): Server {
     console.log("In new");
     let original: string = req.params[0].trim();
     if (original) {
-      let shortForm: string = newShortform();
+      let shortForm: string = lookupOriginal(db, original) || newShortform();
       let record: Shortening = { original, shortForm };
       db[dbNext++] = record;
       res.send(record);
@@ -49,21 +49,21 @@ export function startServer(port: number): Server {
   });
 
   // A valid short form url may get redirected
-  router.get(/^\/(\w{6})/, (req: Express.Request, res: Express.Response): void => {
+  router.get(/^\/(\w{6})$/, (req: Express.Request, res: Express.Response): void => {
     console.log("In redirect for ", req.params[0]);
     let short: string = req.params[0];
-    let original: string | undefined = lookup(db, short);
+    let original: string | undefined = lookupShortForm(db, short);
     if (original) {
       res.redirect(original);
     } else {
-      res.render("invalid");
+      res.status(404).render("invalid");
     }
   });
 
   // Anything else gets an invalid page response
   router.get(/.*/, (req: Express.Request, res: Express.Response): void => {
     console.log("In catch all");
-    res.render("invalid");
+    res.status(404).render("invalid");
   });
 
   app.use("/", router);
@@ -90,8 +90,14 @@ function randomAlphaNum(): string {
   return possibles.charAt(Math.random() * possibles.length);
 }
 
-/** Return the original url if present in the database, undefined if not */
-function lookup(d: Shortening[], s: string): string | undefined {
+/** Return the original url if the shortform is present in the database, undefined if not */
+function lookupShortForm(d: Shortening[], s: string): string | undefined {
   let match: Shortening | undefined = d.find((record: Shortening): boolean => record.shortForm === s);
   return match && match.original;
+}
+
+/** Return the shortform url if the original is present in the database, undefined if not */
+function lookupOriginal(d: Shortening[], o: string): string | undefined {
+  let match: Shortening | undefined = d.find((record: Shortening): boolean => record.original === o);
+  return match && match.shortForm;
 }
