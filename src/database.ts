@@ -1,4 +1,4 @@
-import { Client, Query } from "pg";
+import { connect, Client, QueryResult } from "pg";
 
 
 let defaultConnectionString: string = "postgres://localhost:5432/todo";
@@ -12,8 +12,20 @@ let createSQL: string = `
   `;
 
 
-let client: Client = new Client(connectionString);
-client.connect();
+// Make a pooled connection to postgres
+connect(connectionString, (connectErr: Error, client: Client, done: ((doneErr?: any) => void)) => {
 
-let query: Query = client.query(createSQL);
-query.on("end", () => client.end());
+  if (connectErr) {
+    return console.error("postgress connect error", connectErr);
+  }
+
+  client.query(createSQL, (createErr: Error, result: QueryResult) => {
+    done(); // release client back to pool
+    if (createErr) {
+      return console.error("postgres create query error ", createErr);
+    }
+  });
+
+});
+
+// query.on("end", () => client.end());

@@ -36,7 +36,8 @@
   "dependencies": {
     "debug": "^2.2.0",
     "express": "^4.13.4",
-    "express-handlebars": "^3.0.0"
+    "express-handlebars": "^3.0.0",
+    "pg": "^5.1.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
