@@ -1,7 +1,7 @@
 import { connect, Client, QueryResult } from "pg";
 
 
-let defaultConnectionString: string = "postgres://localhost:5432/todo";
+let defaultConnectionString: string = "postgres://localhost:5432/shortener";
 let connectionString: string = process.env.DATABASE_URL || defaultConnectionString;
 
 let createSQL: string = `

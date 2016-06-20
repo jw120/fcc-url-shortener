@@ -38,7 +38,6 @@
     "@types/debug": "0.0.22-alpha",
     "@types/express": "^4.0.23-alpha",
     "@types/express-handlebars": "0.0.22-alpha",
-    "@types/isomorphic-fetch": "0.0.21-alpha",
     "@types/mocha": "^2.2.21-alpha",
     "@types/pg": "0.0.22-alpha",
     "@types/serve-static": "^1.7.21-alpha",
