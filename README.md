@@ -25,7 +25,8 @@ Testing with Mocha, Chai/Expect and Fetch.
 * TODO Get working with local pg
 * TODO Add to heroku including config variable to hold SERVER_URL (and support heroku local)
 * TODO Add additional API - delete and list shorturls?
-* TODO Migrate from typings to npm (are all available?)
+* DONE Migrate from typings to npm (are all available?)
+* TODO Why does npm @types for isomorphic-fetch not work
 
 ## Ways to run
 
