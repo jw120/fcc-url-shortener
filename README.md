@@ -21,7 +21,20 @@ Testing with Mocha, Chai/Expect and Fetch.
   + TODO Test valid functionality
   + TODO Avoid repitition in test fetching?
 
+* TODO pg -  Use basic pg only - with DIY Promises/helpers
+
+  + DONE Add debug
+  + DONE Get database to work with create/insert/lookup
+  + DONE What causes pause before termination - Not using pg?
+  + Abstract to sqlNone, sqlOne etc
+  + Reconsider db/table/field names
+  + DONE work out what to do with done and connection pool (keep open, re-open?)
+  + Should we use a key on the shortForm? How to handle duplicates? (INSERT .. ON CONFLICT?)
+  +
+
+* TODO Think about making entries unique
 * TODO Make invalid page prettier
+* TODO Think about sanitizing originals (e.g., if contains single quote, or someother injection problem)
 * TODO Get working with local pg
 * TODO Add to heroku including config variable to hold SERVER_URL (and support heroku local)
 * TODO Add additional API - delete and list shorturls?
