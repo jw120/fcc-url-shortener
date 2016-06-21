@@ -20,3 +20,9 @@ drop table shorts; (deletes the table)
 psql shortener -c "select * from shorts;"
 psql shortener -c "drop table shorts;"
 
+## Our config
+
+Database shortener
+Table   translation
+Fields  long
+Field   short

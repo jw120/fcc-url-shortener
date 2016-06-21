@@ -1,4 +1,5 @@
-import { connect, Client, Query, QueryResult, ResultBuilder, end } from "pg";
+// import { connect, Client, Query, QueryResult, ResultBuilder, end } from "pg";
+import * as pg from "pg";
 import * as debug from "debug";
 const d: debug.IDebugger = debug("url-shortener:database");
 
@@ -8,144 +9,181 @@ const d: debug.IDebugger = debug("url-shortener:database");
 //     // Initialization Options
 // });
 let database: string = "shortener";
-let table: string = "shorts";
+let table: string = "translation";
 let defaultConnectionString: string = "postgres://localhost:5432/" + database;
 let connectionString: string = process.env.DATABASE_URL || defaultConnectionString;
 
+
+export function createTable(): Promise<void> {
+  return sqlNone(`CREATE TABLE IF NOT EXISTS ${table}
+                  (short VARCHAR PRIMARY KEY, long VARCHAR not null unique)`);
+}
+
+export function insert(short: string, long: string): Promise<void> {
+  return sqlNone(`INSERT INTO ${table} (short, long) VALUES ('${short}', '${long}')
+                  ON CONFLICT (short) DO UPDATE SET long = EXCLUDED.long`);
+}
+
+export function lookupLong(short: string): Promise<string> {
+  return sqlOne(`SELECT long FROM ${table} WHERE short = '${short}'`)
+    .then((res: any) => {
+      if (res && res.long) {
+        return res.long as string;
+      } else {
+        throw Error(`lookupLong for ${short} failed`);
+      }
+    });
+}
+
+export function lookupShort(long: string): Promise<string> {
+  return sqlOne(`SELECT short FROM ${table} WHERE long = '${long}'`)
+    .then((res: any) => {
+      if (res && res.short) {
+        return res.short as string;
+      } else {
+        throw Error(`lookupShort for ${long} failed`);
+      }
+    });
+}
+
+
 // let db: pgPromise.IDatabase<void> = pgp(connectionString);
 
-export function initialize(): Promise<void> {
+// export function initialize(): Promise<void> {
 
-  return new Promise<void>((resolve: () => void, reject: (reason: any) => void) => {
+//   return new Promise<void>((resolve: () => void, reject: (reason: any) => void) => {
 
-    connect(connectionString, (connectErr: Error, client: Client, done: ((doneErr?: any) => void)) => {
+//     connect(connectionString, (connectErr: Error, client: Client, done: ((doneErr?: any) => void)) => {
 
-      if (connectErr) {
-        reject(connectErr);
-      }
+//       if (connectErr) {
+//         reject(connectErr);
+//       }
 
-      let queryString: string =  `CREATE TABLE IF NOT EXISTS ${table} (
-                                    short VARCHAR PRIMARY KEY,
-                                    original VARCHAR not null unique)`;
-      d("Query:", queryString);
-      let query: Query = client.query(queryString,  (createErr: Error, result: QueryResult) => {
+//       let queryString: string =  `CREATE TABLE IF NOT EXISTS ${table} (
+//                                     short VARCHAR PRIMARY KEY,
+//                                     original VARCHAR not null unique)`;
+//       d("Query:", queryString);
+//       let query: Query = client.query(queryString,  (createErr: Error, result: QueryResult) => {
 
-        done(); // release client back to pool
+//         done(); // release client back to pool
 
-        if  (createErr) {
-            reject(createErr);
-        }
-      });
-      query.on("end", () => {
-        d("initialize end");
-        done();
-        return resolve();
-      });
+//         if  (createErr) {
+//             reject(createErr);
+//         }
+//       });
+//       query.on("end", () => {
+//         d("initialize end");
+//         done();
+//         return resolve();
+//       });
 
-    });
+//     });
 
-  });
+//   });
 
-}
+// }
 
-export function insert(original: string, short: string): Promise<void> {
+// export function insert(original: string, short: string): Promise<void> {
 
-  return new Promise<void>((resolve: () => void, reject: (reason: any) => void) => {
+//   return new Promise<void>((resolve: () => void, reject: (reason: any) => void) => {
 
-    connect(connectionString, (connectErr: Error, client: Client, done: ((doneErr?: any) => void)) => {
+//     connect(connectionString, (connectErr: Error, client: Client, done: ((doneErr?: any) => void)) => {
 
-      if (connectErr) {
-        reject(connectErr);
-      }
+//       if (connectErr) {
+//         reject(connectErr);
+//       }
 
-      let queryString: string = `INSERT INTO ${table} (short, original)
-                                   VALUES ('${short}', '${original}')
-                                   ON CONFLICT (short) DO UPDATE SET original = EXCLUDED.original;`;
-      d("Query:", queryString);
-      let query: Query = client.query(queryString,  (createErr: Error, result: QueryResult) => {
+//       let queryString: string = `INSERT INTO ${table} (short, original)
+//                                    VALUES ('${short}', '${original}')
+//                                    ON CONFLICT (short) DO UPDATE SET original = EXCLUDED.original;`;
+//       d("Query:", queryString);
+//       let query: Query = client.query(queryString,  (createErr: Error, result: QueryResult) => {
 
-        done(); // release client back to pool
+//         done(); // release client back to pool
 
-        if  (createErr) {
-            reject(createErr);
-        }
-      });
-      query.on("end", () => {
-        d("insert end");
-        done();
-        return resolve();
-      });
+//         if  (createErr) {
+//             reject(createErr);
+//         }
+//       });
+//       query.on("end", () => {
+//         d("insert end");
+//         done();
+//         return resolve();
+//       });
 
-    });
+//     });
 
-  });
+//   });
 
-}
+// }
 
-export function lookupShort(original: string): Promise<string> {
+// export function lookupShort(original: string): Promise<string> {
 
-  return new Promise<string>((resolve: (s: string) => void, reject: (reason: any) => void) => {
+//   return new Promise<string>((resolve: (s: string) => void, reject: (reason: any) => void) => {
 
-    connect(connectionString, (connectErr: Error, client: Client, done: ((doneErr?: any) => void)) => {
+//     pg.connect(connectionString, (connectErr: Error, client: pg.Client, done: ((doneErr?: any) => void)) => {
 
-      if (connectErr) {
-        reject(connectErr);
-      }
+//       if (connectErr) {
+//         reject(connectErr);
+//       }
 
-      let queryString: string = `SELECT short FROM ${table} WHERE original = '${original}'`;
-      d("Query:", queryString);
+//       let queryString: string = `SELECT short FROM ${table} WHERE original = '${original}'`;
+//       d("Query:", queryString);
 
-      let query: Query = client.query(queryString, (lookupErr: Error) => {
-        done(); // release client back to pool
-        if  (lookupErr) {
-          reject(lookupErr);
-        }
-      });
-      query.on("row", (row: any, result: ResultBuilder) => {
-        resolve(row.short);
-      });
-    });
+//       let query: pg.Query = client.query(queryString, (lookupErr: Error) => {
+//         done(); // release client back to pool
+//         if  (lookupErr) {
+//           reject(lookupErr);
+//         }
+//       });
+//       query.on("row", (row: any, result: pg.ResultBuilder) => {
+//         resolve(row.short);
+//       });
+//     });
 
-  });
-}
+//   });
+// }
 
 
-export function lookupOriginal(short: string): Promise<string> {
+// export function lookupOriginal(short: string): Promise<string> {
 
-  return new Promise<string>((resolve: (s: string) => void, reject: (reason: any) => void) => {
+//   return new Promise<string>((resolve: (s: string) => void, reject: (reason: any) => void) => {
 
-    connect(connectionString, (connectErr: Error, client: Client, done: ((doneErr?: any) => void)) => {
+//     pg.connect(connectionString, (connectErr: Error, client: pg.Client, done: ((doneErr?: any) => void)) => {
 
-      if (connectErr) {
-        reject(connectErr);
-      }
+//       if (connectErr) {
+//         reject(connectErr);
+//       }
 
-      let queryString: string = `SELECT original FROM ${table} WHERE short = '${short}'`;
-      d("Query:", queryString);
+//       let queryString: string = `SELECT original FROM ${table} WHERE short = '${short}'`;
+//       d("Query:", queryString);
 
-      let query: Query = client.query(queryString, (lookupErr: Error) => {
-        done(); // release client back to pool
-        if  (lookupErr) {
-          reject(lookupErr);
-        }
-      });
-      query.on("row", (row: any, result: ResultBuilder) => {
-        resolve(row.original);
-      });
-    });
+//       let query: pg.Query = client.query(queryString, (lookupErr: Error) => {
+//         done(); // release client back to pool
+//         if  (lookupErr) {
+//           reject(lookupErr);
+//         }
+//       });
+//       query.on("row", (row: any, result: pg.ResultBuilder) => {
+//         resolve(row.original);
+//       });
+//     });
 
-  });
-}
+//   });
+// }
 
 d("Starting");
-initialize()
-  .then(() => insert("quickbrownfox", "abc123"))
+createTable()
+  .then(() => insert("abc123", "quickbrownfox"))
   .then(() => lookupShort("quickbrownfox"))
   .then((s: string) => console.log("Found short", s))
-  .then(() => lookupOriginal("abc123"))
-  .then((s: string) => console.log("Found original", s))
-  .then(() => end() )
-  .catch((e: Error) => console.error(e));
+  .then(() => lookupLong("abc123"))
+  .then((s: string) => console.log("Found long", s))
+  .then(() => pg.end() )
+  .catch((e: Error) => {
+    console.error(e);
+    pg.end();
+  });
 d("At end");
 
 // export function insert(original: string, short: string): Promise<void> {
@@ -231,3 +269,57 @@ d("At end");
 
 // }
 
+
+
+
+/** Returna a promise which runs the given query which returns no result */
+export function sqlNone(queryString: string): Promise<void> {
+
+  return new Promise<void>((resolve: () => void, reject: (reason: any) => void) => {
+
+    pg.connect(connectionString, (connectErr: Error, client: pg.Client, done: ((doneErr?: any) => void)) => {
+
+      if (connectErr) {
+        return reject(connectErr);
+      }
+
+      d("sqlNoneQuery", queryString);
+      client.query(queryString,  (queryErr: Error) => {
+        done(); // release client back to pool
+        return queryErr ? reject(queryErr) : resolve();
+      });
+
+    });
+
+  });
+
+}
+
+/** Returna a promise which runs the given query which returns the first result row */
+export function sqlOne<T>(queryString: string): Promise<T> {
+
+  return new Promise<T>((resolve: (val: T) => void, reject: (reason: any) => void) => {
+
+    pg.connect(connectionString, (connectErr: Error, client: pg.Client, done: ((doneErr?: any) => void)) => {
+
+      if (connectErr) {
+        return reject(connectErr);
+      }
+
+      d("sqlOneQuery:", queryString);
+      client.query(queryString, (queryErr: Error, result: pg.QueryResult) => {
+        done(); // release client back to pool
+        if  (queryErr) {
+          reject(queryErr);
+        } else if (result && result.rows && result.rows.length >= 1) {
+          resolve(result.rows[0] as T);
+        } else {
+          console.error(result);
+          reject(Error("Bad result in sqlOne"));
+        }
+      });
+
+    });
+
+  });
+}

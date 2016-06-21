@@ -26,10 +26,12 @@ Testing with Mocha, Chai/Expect and Fetch.
   + DONE Add debug
   + DONE Get database to work with create/insert/lookup
   + DONE What causes pause before termination - Not using pg?
-  + Abstract to sqlNone, sqlOne etc
-  + Reconsider db/table/field names
+  + DONE Abstract to sqlNone, sqlOne etc
+  + DONE Reconsider db/table/field names
+  + TODO Sort our file structure
+  + TODO How to test if a record exists
   + DONE work out what to do with done and connection pool (keep open, re-open?)
-  + Should we use a key on the shortForm? How to handle duplicates? (INSERT .. ON CONFLICT?)
+  + DONE Should we use a key on the shortForm? How to handle duplicates? (INSERT .. ON CONFLICT?)
   +
 
 * TODO Think about making entries unique
