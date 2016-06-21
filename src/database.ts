@@ -24,10 +24,12 @@ export function insert(short: string, long: string): Promise<void> {
                   ON CONFLICT (short) DO UPDATE SET long = EXCLUDED.long`);
 }
 
-export function lookupLong(short: string): Promise<string> {
+export function lookupLong(short: string): Promise<string | null> {
   return sqlOne(`SELECT long FROM ${table} WHERE short = '${short}'`)
     .then((res: any) => {
-      if (res && res.long) {
+      if (res === null) {
+        return null;
+      } else if (res && res.long) {
         return res.long as string;
       } else {
         throw Error(`lookupLong for ${short} failed`);
@@ -35,10 +37,12 @@ export function lookupLong(short: string): Promise<string> {
     });
 }
 
-export function lookupShort(long: string): Promise<string> {
+export function lookupShort(long: string): Promise<string | null> {
   return sqlOne(`SELECT short FROM ${table} WHERE long = '${long}'`)
     .then((res: any) => {
-      if (res && res.short) {
+      if (res === null) {
+        return null;
+      } else if (res && res.short) {
         return res.short as string;
       } else {
         throw Error(`lookupShort for ${long} failed`);
@@ -176,9 +180,11 @@ d("Starting");
 createTable()
   .then(() => insert("abc123", "quickbrownfox"))
   .then(() => lookupShort("quickbrownfox"))
-  .then((s: string) => console.log("Found short", s))
+  .then((s: string | null)  => console.log(s ? "Found " + s : "No match"))
   .then(() => lookupLong("abc123"))
-  .then((s: string) => console.log("Found long", s))
+  .then((s: string | null) => console.log(s ? "Found " + s : "No match"))
+  .then(() => lookupLong("abc124"))
+  .then((s: string | null) => console.log(s ? "Found " + s : "No match"))
   .then(() => pg.end() )
   .catch((e: Error) => {
     console.error(e);
@@ -295,10 +301,10 @@ export function sqlNone(queryString: string): Promise<void> {
 
 }
 
-/** Returna a promise which runs the given query which returns the first result row */
-export function sqlOne<T>(queryString: string): Promise<T> {
+/** Returns a promise which runs the given query and returns the first result row or null if no results */
+export function sqlOne<T>(queryString: string): Promise<T | null> {
 
-  return new Promise<T>((resolve: (val: T) => void, reject: (reason: any) => void) => {
+  return new Promise<T | null>((resolve: (val: T | null) => void, reject: (reason: any) => void) => {
 
     pg.connect(connectionString, (connectErr: Error, client: pg.Client, done: ((doneErr?: any) => void)) => {
 
@@ -311,8 +317,12 @@ export function sqlOne<T>(queryString: string): Promise<T> {
         done(); // release client back to pool
         if  (queryErr) {
           reject(queryErr);
-        } else if (result && result.rows && result.rows.length >= 1) {
-          resolve(result.rows[0] as T);
+        } else if (result && result.rows) {
+          if (result.rows.length >= 1) {
+            resolve(result.rows[0] as T);
+          } else {
+            resolve(null);
+          }
         } else {
           console.error(result);
           reject(Error("Bad result in sqlOne"));
