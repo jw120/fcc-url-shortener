@@ -7,12 +7,8 @@
         "noImplicitReturns": true,
         "strictNullChecks": true
     },
-    "files": [
-        "src/index.ts",
-        "src/server.ts",
-        "src/database.ts",
-        "test/server_spec.ts",
-        "test/promiseAssert.ts",
-        "typings/index.d.ts"
+    "exclude": [
+        "node_modules/",
+        "old/"
     ]
 }

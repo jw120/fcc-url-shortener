@@ -13,7 +13,7 @@
     "compile": "tsc",
     "test": "mocha test/*_spec.js",
     "test:watch": "npm run test -- --watch",
-    "src-start": "SERVER_URL=localhost:8085 PORT=8085 node src/index.js",
+    "src-start": "SERVER_URL=http://localhost:8085 PORT=8085 node src/index.js",
     "// Build a deployable version locally and test by running with node": "",
     "build:static": "for f in static/*; do cp $f deploy/${f#static/deploy-}; done",
     "build:src": "cp src/*.js src/*.html deploy/",

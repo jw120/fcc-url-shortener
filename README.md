@@ -14,14 +14,8 @@ Testing with Mocha, Chai/Expect and Fetch.
   + DONE re-direct
   + DONE invalid URL page
 
-* TODO Use debug instead of console
-* TODO Server tests
-
-  + DONE What should return value be for invalid/missing,
-  + TODO Test valid functionality
-  + TODO Avoid repitition in test fetching?
-
-* TODO pg -  Use basic pg only - with DIY Promises/helpers
+* DONE Use debug instead of console
+* DONE pg -  Use basic pg only - with DIY Promises/helpers
 
   + DONE Add debug
   + DONE Get database to work with create/insert/lookup
@@ -29,17 +23,19 @@ Testing with Mocha, Chai/Expect and Fetch.
   + DONE Abstract to sqlNone, sqlOne etc
   + DONE Reconsider db/table/field names
   + TODO Sort our file structure
-  + TODO How to test if a record exists
+  + DONE How to test if a record exists
   + DONE work out what to do with done and connection pool (keep open, re-open?)
   + DONE Should we use a key on the shortForm? How to handle duplicates? (INSERT .. ON CONFLICT?)
-  +
 
-* TODO Think about making entries unique
+
+* TODO Server tests
+* TODO Tidy server.ts
+* TODO Think about making entries unique - should long's be unique?
+* TODO Add catches to server.ts
 * TODO Make invalid page prettier
+* TODO Add new url entry validation
 * TODO Think about sanitizing originals (e.g., if contains single quote, or someother injection problem)
-* TODO Get working with local pg
 * TODO Add to heroku including config variable to hold SERVER_URL (and support heroku local)
-* TODO Add additional API - delete and list shorturls?
 * DONE Migrate from typings to npm (are all available?)
 * TODO Why does npm @types for isomorphic-fetch not work
 
