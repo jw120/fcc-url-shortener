@@ -17,7 +17,7 @@ const shortLength: number = 6;
 const exampleURL: string = "https://freecodecamp.com";
 
 /** JSON result returned to client when a new shortening is created */
-interface APIResult {
+export interface APIResult {
   original_url: string;
   short_url: string;
 }

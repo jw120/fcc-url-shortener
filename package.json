@@ -11,7 +11,9 @@
     "// Development build/test/run": "",
     "lint": "tslint -c tslint.json src/*.ts test/*.ts",
     "compile": "tsc",
-    "test": "mocha test/*_spec.js",
+    "test:cleardb": "(psql testdb -c 'drop table translation' || true)",
+    "test:mocha": "DATABASE_NAME=testdb mocha test/*_spec.js",
+    "test": "npm run test:cleardb && npm run test:mocha",
     "test:watch": "npm run test -- --watch",
     "src-start": "SERVER_URL=http://localhost:8085 PORT=8085 node src/index.js",
     "// Build a deployable version locally and test by running with node": "",
@@ -47,7 +49,9 @@
     "pg": "^5.1.0"
   },
   "devDependencies": {
+    "@types/chai-as-promised": "0.0.22-alpha",
     "chai": "^3.5.0",
+    "chai-as-promised": "^5.3.0",
     "isomorphic-fetch": "^2.2.1",
     "mocha": "^2.5.3",
     "tslint": "next",

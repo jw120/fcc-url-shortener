@@ -29,8 +29,14 @@ Testing with Mocha, Chai/Expect and Fetch.
 
 
 * TODO Server tests
+
+  + How to run a series of async tests in mocha
+  + Why are new promisified tests not calling the right url?
+
+* TODO USe node-fetch instead of isomorphic? (as iso just calls node)
 * TODO Tidy server.ts
 * TODO Think about making entries unique - should long's be unique?
+* TODO Try async/await?pkk
 * TODO Add catches to server.ts
 * TODO Make invalid page prettier
 * TODO Add new url entry validation

@@ -4,7 +4,7 @@ import { sqlNone, sqlOne } from "./pg-prom";
 // import * as debug from "debug";
 // const d: debug.IDebugger = debug("url-shortener:database");
 
-let database: string = "shortener";
+let database: string = process.env.DATABASE_NAME || "shortener";
 let table: string = "translation";
 let defaultConnection: string = "postgres://localhost:5432/" + database;
 let connection: string = process.env.DATABASE_URL || defaultConnection;

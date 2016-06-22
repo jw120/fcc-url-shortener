@@ -11,11 +11,12 @@ export function sqlNone(connection: string, query: string): Promise<void> {
 
     pg.connect(connection, (connectErr: Error, client: pg.Client, done: ((doneErr?: any) => void)) => {
 
+      d("sqlNone running connect callback for", connection, query);
+
       if (connectErr) {
         return reject(connectErr);
       }
 
-      d("sqlNoneQuery", query);
       client.query(query,  (queryErr: Error) => {
         done(); // release client back to pool
         return queryErr ? reject(queryErr) : resolve();
@@ -34,11 +35,12 @@ export function sqlOne<T>(connection: string, query: string): Promise<T | null> 
 
     pg.connect(connection, (connectErr: Error, client: pg.Client, done: ((doneErr?: any) => void)) => {
 
+      d("sqlOne running connect callback for", connection, query);
+
       if (connectErr) {
         return reject(connectErr);
       }
 
-      d("sqlOneQuery:", query);
       client.query(query, (queryErr: Error, result: pg.QueryResult) => {
         done(); // release client back to pool
         if  (queryErr) {
