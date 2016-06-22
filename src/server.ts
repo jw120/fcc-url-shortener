@@ -3,15 +3,16 @@
 import * as Express from "express";
 import * as exphbs from "express-handlebars";
 import { Server } from "http";
+import * as debug from "debug";
+const d: debug.IDebugger = debug("url-shortener:server");
 
 import { randomAlphanum } from "./random";
 import { createTable, insert, lookupLong, lookupShort } from "./database";
 
-const serverURL: string = process.env.SERVER_URL || "server";
-
+let serverURL: string;
 
 /** Length of each shortened URL */
-const shortLength: number = 6;
+export const shortLength: number = 6;
 
 /** Example to show on root html page (and pre-propulate in the database) */
 const exampleURL: string = "https://freecodecamp.com";
@@ -24,6 +25,8 @@ export interface APIResult {
 
 /** Create and start a timestamp server on the given port (which is returned) */
 export function startServer(port: number): Server {
+
+  serverURL = process.env.SERVER_URL || "http://localhost:" + port;
 
   // Set up postgres
   createTable();
@@ -73,8 +76,10 @@ function addRoutes(router: Express.Router): void {
     lookupLong(short)
       .then((long: string | null) => {
         if (!long) {
+          d("No such shortform");
           res.status(404).render("invalid");
         } else {
+          d("Redirecting to", long);
           res.redirect(long);
         }
       });

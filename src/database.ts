@@ -1,8 +1,8 @@
 /** Database access functions for url-shortener on top of pg-prom */
 
 import { sqlNone, sqlOne } from "./pg-prom";
-// import * as debug from "debug";
-// const d: debug.IDebugger = debug("url-shortener:database");
+import * as debug from "debug";
+const d: debug.IDebugger = debug("url-shortener:database");
 
 let database: string = process.env.DATABASE_NAME || "shortener";
 let table: string = "translation";
@@ -27,10 +27,14 @@ export function lookupLong(short: string): Promise<string | null> {
   return sqlOne(connection, `SELECT long FROM ${table} WHERE short = '${short}'`)
     .then((res: any) => {
       if (res === null) {
+        d("lookupLong returns null");
         return null;
       } else if (res && res.long) {
-        return res.long as string;
+        let long: string = res.long as string;
+        d("lookupLong returns", long);
+        return long;
       } else {
+        d("Error in lookupLong");
         throw Error(`lookupLong for ${short} failed`);
       }
     });
@@ -40,10 +44,14 @@ export function lookupShort(long: string): Promise<string | null> {
   return sqlOne(connection, `SELECT short FROM ${table} WHERE long = '${long}'`)
     .then((res: any) => {
       if (res === null) {
+        d("lookupShort returns null");
         return null;
       } else if (res && res.short) {
-        return res.short as string;
+        let short: string = res.short as string;
+        d("lookupShort returns", short);
+        return short;
       } else {
+        d("Error in lookupShort");
         throw Error(`lookupShort for ${long} failed`);
       }
     });
