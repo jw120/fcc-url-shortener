@@ -54,7 +54,7 @@ function addRoutes(router: Express.Router): void {
   // /new/:url adds the url to our database and returns a JSON description
   router.get(/^\/new\/(.+)/, (req: Express.Request, res: Express.Response): void => {
     let long: string = req.params[0].trim();
-    if (long) {
+    if (isURL(long)) {
       lookupShort(long)
         .then((short: string | null) => {
           if (short === null) {
@@ -67,6 +67,11 @@ function addRoutes(router: Express.Router): void {
             res.send({ original_url: long, short_url: serverURL + "/" + short});
           }
         });
+    } else {
+      d("Not a valid URL");
+      res.send({
+        error: "Wrong url format, make sure you have a valid protocol and real site."
+      });
     }
   });
 
@@ -116,4 +121,12 @@ function renderRoot(res: Express.Response): void {
       }
     });
 
+}
+
+/**  Helper function to test if the string looks like a valid URL
+ *
+ * Taken from @stephenhay on https://mathiasbynens.be/demo/url-regex
+ */
+function isURL(s: string): boolean {
+  return /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/.test(s);
 }

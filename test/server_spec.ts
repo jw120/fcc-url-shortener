@@ -18,8 +18,11 @@ let invalidUrl: string;
 
 /** URLs to save during test */
 let long1: string = "http://first.com/";
-let long2: string = "ftp://second.com/";
+let long2: string = "ftp://second.com";
 let long3: string = "https://third.co.uk/sub/dir";
+let none1: string = "htp://abc.com/";
+let none2: string = "https:/bcd.com";
+let none3: string = "ftp://";
 
 /** The server to be closed if we started one */
 let server: Server| null = null;
@@ -125,6 +128,28 @@ describe("Server tests",  () => {
           expect(res.headers.get("Location")).to.equal(long3);
         });
     });
+
+    it("Rejects new for the invalid url " + none1, (): Promise<void> =>
+      fetch(serverUrl + "/new/" + none1)
+        .then((res: IResponse) => res.json())
+        .then((r: any) => {
+          expect(r.error).to.equal("Wrong url format, make sure you have a valid protocol and real site.");
+        }));
+
+    it("Rejects new for the invalid url " + none2, (): Promise<void> =>
+      fetch(serverUrl + "/new/" + none2)
+        .then((res: IResponse) => res.json())
+        .then((r: any) => {
+          expect(r.error).to.equal("Wrong url format, make sure you have a valid protocol and real site.");
+        }));
+
+    it("Rejects new for the invalid url " + none3, (): Promise<void> =>
+      fetch(serverUrl + "/new/" + none3)
+        .then((res: IResponse) => res.json())
+        .then((r: any) => {
+          expect(r.error).to.equal("Wrong url format, make sure you have a valid protocol and real site.");
+        }));
+
 
   });
 
