@@ -2,7 +2,7 @@
 
 import * as pg from "pg";
 import * as debug from "debug";
-const d: debug.IDebugger = debug("pg-prom");
+const d: debug.IDebugger = debug("url-shortner:pg-prom");
 
 /** Returna a promise which runs the given query which returns no result */
 export function sqlNone(connection: string, query: string): Promise<void> {

@@ -1,28 +1,33 @@
 /** Database access functions for url-shortener on top of pg-prom */
 
-import { sqlNone, sqlOne } from "./pg-prom";
 import * as debug from "debug";
 const d: debug.IDebugger = debug("url-shortener:database");
 
-let database: string = process.env.DATABASE_NAME || "shortener";
-let table: string = "translation";
-let defaultConnection: string = "postgres://localhost:5432/" + database;
-let connection: string = process.env.DATABASE_URL || defaultConnection;
+import { sqlNone, sqlOne } from "./pg-prom";
+
+/** Postgres connection string */
+const connection: string = process.env.DATABASE_URL || ("postgres://localhost:5432/shortener");
+
+/** POstgres table name */
+const table: string = "translation";
 
 /** Create our table in the database if it does not already exist */
 export function createTable(): Promise<void> {
+  d("Creating table");
   return sqlNone(connection,
                  `CREATE TABLE IF NOT EXISTS ${table}
                     (short VARCHAR PRIMARY KEY, long VARCHAR not null unique)`);
 }
 
-/** Insert the new record  */
+/** Insert the new record, overwriting any existing record with the same short name  */
 export function insert(short: string, long: string): Promise<void> {
+  d("Inserting", short, long);
   return sqlNone(connection,
                  `INSERT INTO ${table} (short, long) VALUES ('${short}', '${long}')
                     ON CONFLICT (short) DO UPDATE SET long = EXCLUDED.long`);
 }
 
+/** Return the original url for the given short url, or null if no such short url */
 export function lookupLong(short: string): Promise<string | null> {
   return sqlOne(connection, `SELECT long FROM ${table} WHERE short = '${short}'`)
     .then((res: any) => {
@@ -40,6 +45,7 @@ export function lookupLong(short: string): Promise<string | null> {
     });
 }
 
+/** Return the short name for the given original url, or null if no such short url */
 export function lookupShort(long: string): Promise<string | null> {
   return sqlOne(connection, `SELECT short FROM ${table} WHERE long = '${long}'`)
     .then((res: any) => {

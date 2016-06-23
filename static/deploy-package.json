@@ -1,7 +1,7 @@
 {
   "name": "url-shortener",
   "version": "1.0.0",
-  "description": "Url shortener exercise for FreeCodeCamp",
+  "description": "URL shortener exercise for FreeCodeCamp",
   "engines": {
     "node": "6.2.1"
   },

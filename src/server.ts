@@ -1,20 +1,21 @@
-/** Main server logic - provides function to create and start an Express server */
+/** Main server logic creates and start an Express server with its callbacks and the Postgres database */
 
 import * as Express from "express";
 import * as exphbs from "express-handlebars";
-import { Server } from "http";
+import { Server as httpServer } from "http";
 import * as debug from "debug";
 const d: debug.IDebugger = debug("url-shortener:server");
 
 import { randomAlphanum } from "./random";
 import { createTable, insert, lookupLong, lookupShort } from "./database";
 
+/** URL that our express server is running on */
 let serverURL: string;
 
 /** Length of each shortened URL */
 export const shortLength: number = 6;
 
-/** Example to show on root html page (and pre-propulate in the database) */
+/** Example to show on root html page (and to pre-propulate in the database) */
 const exampleURL: string = "https://freecodecamp.com";
 
 /** JSON result returned to client when a new shortening is created */
@@ -23,8 +24,13 @@ export interface APIResult {
   short_url: string;
 }
 
-/** Create and start a timestamp server on the given port (which is returned) */
-export function startServer(port: number): Server {
+/** JSON result return on trying to create a short url for a bad original URL */
+const badURLReturn: any =  {
+  error: "Wrong url format, make sure you have a valid protocol and real site."
+};
+
+/** Create and start the Express server (with callbacks and database) on the given port, return our http server */
+export function startServer(port: number): httpServer {
 
   serverURL = process.env.SERVER_URL || "http://localhost:" + port;
 
@@ -44,6 +50,7 @@ export function startServer(port: number): Server {
 
 }
 
+/** Helper function to add route callback to the Express router */
 function addRoutes(router: Express.Router): void {
 
    // Root page returns a static html page explaining the microservice
@@ -53,31 +60,33 @@ function addRoutes(router: Express.Router): void {
 
   // /new/:url adds the url to our database and returns a JSON description
   router.get(/^\/new\/(.+)/, (req: Express.Request, res: Express.Response): void => {
-    let long: string = req.params[0].trim();
-    if (isURL(long)) {
-      lookupShort(long)
-        .then((short: string | null) => {
-          if (short === null) {
-            short = randomAlphanum(shortLength);
-            insert(short, long)
-              .then(() => {
-                res.send({ original_url: long, short_url: serverURL + "/" + short});
-              });
-          } else {
-            res.send({ original_url: long, short_url: serverURL + "/" + short});
-          }
-        });
-    } else {
+
+    const long: string = req.params[0].trim();
+
+    if (!isURL(long)) {
       d("Not a valid URL");
-      res.send({
-        error: "Wrong url format, make sure you have a valid protocol and real site."
-      });
+      res.send(badURLReturn);
+      return;
     }
+
+    lookupShort(long)
+      .then((possibleShort: string | null): string => {
+          if (possibleShort === null) {
+            possibleShort = randomAlphanum(shortLength);
+            insert(possibleShort, long);
+          }
+          return possibleShort;
+      })
+      .then((short: string): void => {
+        res.send({ original_url: long, short_url: serverURL + "/" + short});
+      });
   });
 
   // A valid short form url may get redirected
   router.get(/^\/(\w{6})$/, (req: Express.Request, res: Express.Response): void => {
+
     let short: string = req.params[0];
+
     lookupLong(short)
       .then((long: string | null) => {
         if (!long) {
@@ -97,8 +106,10 @@ function addRoutes(router: Express.Router): void {
 
 }
 
+/** Helper function to render the root page */
 function renderRoot(res: Express.Response): void {
 
+  // Parameters to pass to the Handlebars view renderer
   let rootParams: any = {
       title: "FreeCodeCamp URL Shortener Exercise",
       serverURL,
@@ -107,18 +118,19 @@ function renderRoot(res: Express.Response): void {
   };
 
   lookupShort(exampleURL)
-    .then((short: string | null) => {
-      if (short) {
-        rootParams.exampleShort = short;
-        res.render("root", rootParams);
+    .then((possibleShort: string | null): string => {
+      if (possibleShort) {
+        return possibleShort;
       } else {
         let newShort: string = randomAlphanum(shortLength);
-        rootParams.exampleShort = newShort;
-        insert(newShort, exampleURL)
-          .then(() => {
-            res.render("root", rootParams);
-          });
+        insert(newShort, exampleURL);
+        return newShort;
       }
+    })
+    .then((exampleShort: string): void => {
+
+      rootParams.exampleShort = exampleShort;
+      res.render("root", rootParams);
     });
 
 }
@@ -128,5 +140,7 @@ function renderRoot(res: Express.Response): void {
  * Taken from @stephenhay on https://mathiasbynens.be/demo/url-regex
  */
 function isURL(s: string): boolean {
+
   return /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/.test(s);
+
 }

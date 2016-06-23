@@ -13,15 +13,17 @@ Testing with Mocha, Chai/Expect and Fetch.
 * DONE pg -  Use basic pg only - with DIY Promises/helpers
 * DONE Server tests
 * DONE Use node-fetch instead of isomorphic? (as iso just calls node) - no (as node-fetch not TS friendly)
-* TODO Tidy server.ts and other files
-* TODO Think about making entries unique - should long's be unique?
-* TODO Try async/await?pkk
-* TODO Add catches to server.ts?
-* TODO Make invalid page prettier - include error messages?
+* DONE Tidy server.ts and other files
+* DONE Think about making entries unique - should long's be unique?
 * DONE Add new url entry validation
-* TODO Think about sanitizing originals (e.g., if contains single quote, or someother injection problem)
-* TODO Add to heroku including config variable to hold SERVER_URL (and support heroku local)
 * DONE Migrate from typings to npm (are all available?)
+
+* TODO Add catches to server.ts? Catch a server in use error on startup
+* TODO Make invalid page prettier - include error messages?
+* TODO Think about sanitizing originals (e.g., if contains single quote, or someother injection problem)
+
+* TODO Add to heroku including config variable to hold SERVER_URL (and support heroku local)
+
 
 ## Ways to run
 
