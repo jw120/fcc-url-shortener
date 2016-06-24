@@ -6,8 +6,9 @@ import { Server as httpServer } from "http";
 import * as debug from "debug";
 const d: debug.IDebugger = debug("url-shortener:server");
 
-import { randomAlphanum } from "./random";
+import asyncThrow from "./asyncthrow";
 import { createTable, insert, lookupLong, lookupShort } from "./database";
+import { randomAlphanum } from "./random";
 
 /** URL that our express server is running on */
 let serverURL: string;
@@ -29,24 +30,25 @@ const badURLReturn: any =  {
   error: "Wrong url format, make sure you have a valid protocol and real site."
 };
 
-/** Create and start the Express server (with callbacks and database) on the given port, return our http server */
-export function startServer(port: number): httpServer {
+/** Create and start the Express server (with callbacks and database) on the given port, return our http server or null */
+export function startServer(port: number): Promise<httpServer | null> {
 
   serverURL = process.env.SERVER_URL || "http://localhost:" + port;
 
-  // Set up postgres
-  createTable();
+  return createTable()
+    .then((): httpServer | null => {
 
-  // Set up express
-  const app: Express.Application = Express();
-  app.engine("handlebars", exphbs({defaultLayout: "main"}));
-  app.set("view engine", "handlebars");
-  const router: Express.Router = Express.Router();
-  addRoutes(router);
-  app.use("/", router);
+      const app: Express.Application = Express();
+      app.engine("handlebars", exphbs({defaultLayout: "main"}));
+      app.set("view engine", "handlebars");
 
-  // Return this server to facilitate testing
-  return app.listen(port);
+      const router: Express.Router = Express.Router();
+      addRoutes(router);
+      app.use("/", router);
+
+      return app.listen(port);
+    })
+    .catch(asyncThrow);
 
 }
 
@@ -79,7 +81,8 @@ function addRoutes(router: Express.Router): void {
       })
       .then((short: string): void => {
         res.send({ original_url: long, short_url: serverURL + "/" + short});
-      });
+      })
+      .catch(asyncThrow);
   });
 
   // A valid short form url may get redirected
@@ -96,7 +99,8 @@ function addRoutes(router: Express.Router): void {
           d("Redirecting to", long);
           res.redirect(long);
         }
-      });
+      })
+      .catch(asyncThrow);
   });
 
   // Anything else gets an invalid page response
@@ -131,7 +135,8 @@ function renderRoot(res: Express.Response): void {
 
       rootParams.exampleShort = exampleShort;
       res.render("root", rootParams);
-    });
+    })
+    .catch(asyncThrow);
 
 }
 

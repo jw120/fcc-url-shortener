@@ -4,6 +4,8 @@ import * as pg from "pg";
 import * as debug from "debug";
 const d: debug.IDebugger = debug("url-shortner:pg-prom");
 
+import asyncThrow from "./asyncthrow";
+
 /** Returna a promise which runs the given query which returns no result */
 export function sqlNone(connection: string, query: string): Promise<void> {
 
@@ -24,7 +26,8 @@ export function sqlNone(connection: string, query: string): Promise<void> {
 
     });
 
-  });
+  })
+  .catch(asyncThrow);
 
 }
 
@@ -58,5 +61,6 @@ export function sqlOne<T>(connection: string, query: string): Promise<T | null> 
 
     });
 
-  });
+  })
+  .catch(asyncThrow);
 }

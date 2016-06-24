@@ -4,6 +4,8 @@ Built around Express and Postgres. Also uses Handlebars and TypeScript.
 
 Testing with Mocha, Chai/Expect and Fetch.
 
+Used .catch(asyncThrow) whenever evaluating a Promise
+
 ## Plan of attack
 
 * DONE Get root page rendering with handlebars (to show nice urls to our app)
@@ -18,7 +20,8 @@ Testing with Mocha, Chai/Expect and Fetch.
 * DONE Add new url entry validation
 * DONE Migrate from typings to npm (are all available?)
 
-* TODO Add catches to server.ts? Catch a server in use error on startup
+* DONE Add catches to server.ts? Catch a server in use error on startup
+* DONE Use asncthrow
 * TODO Make invalid page prettier - include error messages?
 * TODO Think about sanitizing originals (e.g., if contains single quote, or someother injection problem)
 

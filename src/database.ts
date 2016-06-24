@@ -3,6 +3,7 @@
 import * as debug from "debug";
 const d: debug.IDebugger = debug("url-shortener:database");
 
+import asyncThrow  from "./asyncthrow";
 import { sqlNone, sqlOne } from "./pg-prom";
 
 /** Postgres connection string */

@@ -11,6 +11,7 @@ import * as chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 let expect: Chai.ExpectStatic = chai.expect;
 
+import asyncThrow from "../src/asyncthrow";
 import { startServer, shortLength, APIResult } from "../src/server";
 
 /** URL we will use to reference the server */
@@ -38,14 +39,23 @@ const manualRedirectOption: any = {
 
 describe("Server tests",  () => {
 
-  before(() => {
+  before((): Promise<void> => {
 
     if (process.env.SERVER) {
+
       serverURL = process.env.SERVER;
       serverToClose = null;
+      return Promise.resolve();
+
     } else {
-      serverToClose = startServer(defaultPort);
-      serverURL = "http://localhost:" + defaultPort;
+
+      return startServer(defaultPort)
+        .then((server: httpServer): void => {
+          serverToClose = server;
+          serverURL = "http://localhost:" + defaultPort;
+        })
+        .catch(asyncThrow);
+
     }
 
   });
