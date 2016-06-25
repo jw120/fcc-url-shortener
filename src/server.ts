@@ -31,7 +31,7 @@ export interface APIFailure {
 
 /** JSON result return on trying to create a short url for a bad original URL */
 export const badURLReturn: APIFailure =  {
-  error: "Wrong url format, make sure you have a valid protocol and real site."
+  error: "I do not think that is a valid URL "
 };
 
 /** Parameters passed to our handlebars renderers */
@@ -62,13 +62,13 @@ export let rootParams: any = {
 /** Parameters passed to invalid page rendering when the short url passed to /new is not in our database */
 export const noSuchParams: InvalidRenderParams = {
   title: pageTitle,
-  reason: "This short-form URL is not in the database"
+  reason: "I do not recognize that shortform"
 };
 
 /** Parameters passed to invalid page rendering when the url format is not recognized */
 export const unknownParams: InvalidRenderParams = {
   title: pageTitle,
-  reason: "Unknown url format"
+  reason: "I do not know how to respond to that"
 };
 
 /** Create and start the Express server (with callbacks and database) on the given port, return our http server or null */
