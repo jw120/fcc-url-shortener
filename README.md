@@ -25,7 +25,10 @@ Used .catch(asyncThrow) whenever evaluating a Promise
 * DONE Make invalid page prettier - include error messages?
 * DONE Check behaviour is what we want (and to spec) on different error types
 
-* TODO Add to heroku including config variable to hold SERVER_URL (and support heroku local)
+* TODO Add to heroku
+* TODO Get server name to work on heroku - including config variable to hold SERVER_URL (and support heroku local)
+
+* TODO Incorporoaret Howto notes on postgres and heroku into README or similar
 
 
 ## Ways to run
@@ -35,26 +38,40 @@ Used .catch(asyncThrow) whenever evaluating a Promise
 For use testing during development
 
 ```bash
-npm run compile (if not compiled by VS Code's Build)
-npm run src-start (which does node src/server.js)
+npm run lint && npm run compile
+npm run src-start # To start the server (requires a running postgres server)
+npm run test # To run mocha tests (which does not require the server to be running)
 ```
 
 ### 2. From local deploy dir
 
+Intermediate step - makes a copy of the runtime files in deploy/ and runs them with our usual node
+
+```bash
+npm run lint && npm run compile
+npm run build # Copies required files to deploy/
+npm run build-start # which does node deploy/index.js (requires a running postgres server)
+npm run build-test # runs mocha tests on a running build-start server
+```
+
+### 3. Heroku local
+
 To test deployment before pushing to heroku
 
 ```bash
-npm run compile
+npm run lint compile && npm run compile
 npm run build
-npm run local-install (which does npm install in the deploy directory)
-npm run local-start (which does heroku local in the deploy directory)
+npm run local-install # which does npm install in the deploy directory
+npm run local-start # which does heroku local in the deploy directory
+npm run local-test # runs mocha tests on a running local-start server
 ```
 
-### 3. On Heroku
+### 4. On Heroku
 
-After local deploy build is built
+Deployed version
 
 ```bash
 npm run deploy
+npm run deploy-test # runs mocha tests against the heroku remote version
 ```
 
