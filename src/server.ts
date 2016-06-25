@@ -20,14 +20,55 @@ export const shortLength: number = 6;
 const exampleURL: string = "https://freecodecamp.com";
 
 /** JSON result returned to client when a new shortening is created */
-export interface APIResult {
+export type APIResult = APISuccess | APIFailure;
+export interface APISuccess {
   original_url: string;
   short_url: string;
 }
+export interface APIFailure {
+  error: string;
+}
 
 /** JSON result return on trying to create a short url for a bad original URL */
-const badURLReturn: any =  {
+export const badURLReturn: APIFailure =  {
   error: "Wrong url format, make sure you have a valid protocol and real site."
+};
+
+/** Parameters passed to our handlebars renderers */
+interface RootRenderParams {
+  title: string;
+  serverURL: string | null;
+  exampleURL: string;
+  exampleShort: string | null;
+};
+interface InvalidRenderParams {
+  title: string;
+  reason: string;
+};
+
+
+/** HTML Page title */
+const pageTitle: string = "FreeCodeCamp Back End Exercise: URL shortener microservice";
+
+
+/** Parameters passed to the handlebars renderer for our root page */
+export let rootParams: any = {
+  title: pageTitle,
+  severURL: null,
+  exampleURL,
+  exampleShort: null
+};
+
+/** Parameters passed to invalid page rendering when the short url passed to /new is not in our database */
+export const noSuchParams: InvalidRenderParams = {
+  title: pageTitle,
+  reason: "This short-form URL is not in the database"
+};
+
+/** Parameters passed to invalid page rendering when the url format is not recognized */
+export const unknownParams: InvalidRenderParams = {
+  title: pageTitle,
+  reason: "Unknown url format"
 };
 
 /** Create and start the Express server (with callbacks and database) on the given port, return our http server or null */
@@ -94,7 +135,7 @@ function addRoutes(router: Express.Router): void {
       .then((long: string | null) => {
         if (!long) {
           d("No such shortform");
-          res.status(404).render("invalid");
+          res.status(404).render("invalid", noSuchParams);
         } else {
           d("Redirecting to", long);
           res.redirect(long);
@@ -105,7 +146,7 @@ function addRoutes(router: Express.Router): void {
 
   // Anything else gets an invalid page response
   router.get(/.*/, (req: Express.Request, res: Express.Response): void => {
-    res.status(404).render("invalid");
+    res.status(404).render("invalid", unknownParams);
   });
 
 }
@@ -113,13 +154,14 @@ function addRoutes(router: Express.Router): void {
 /** Helper function to render the root page */
 function renderRoot(res: Express.Response): void {
 
-  // Parameters to pass to the Handlebars view renderer
-  let rootParams: any = {
-      title: "FreeCodeCamp URL Shortener Exercise",
-      serverURL,
-      exampleURL,
-      exampleShort: "XYZ"
-  };
+  // Fill in the server URL parameter if it is missing
+  rootParams.serverURL = rootParams.serverURL || serverURL;
+
+  // If we have already recorded our example URL, just render the page
+  if (rootParams.exampleShort) {
+    res.render("root", rootParams);
+    return;
+  }
 
   lookupShort(exampleURL)
     .then((possibleShort: string | null): string => {

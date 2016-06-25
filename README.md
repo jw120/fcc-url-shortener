@@ -22,7 +22,9 @@ Used .catch(asyncThrow) whenever evaluating a Promise
 
 * DONE Add catches to server.ts? Catch a server in use error on startup
 * DONE Use asncthrow
-* TODO Make invalid page prettier - include error messages?
+* DONE Make invalid page prettier - include error messages?
+* TODO Check behaviour is what we want (and to spec) on different error types
+* TODO Should we standardized error terminology - what is unknown/invalid/noSuch etc
 * TODO Think about sanitizing originals (e.g., if contains single quote, or someother injection problem)
 
 * TODO Add to heroku including config variable to hold SERVER_URL (and support heroku local)

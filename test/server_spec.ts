@@ -12,7 +12,7 @@ chai.use(chaiAsPromised);
 let expect: Chai.ExpectStatic = chai.expect;
 
 import asyncThrow from "../src/asyncthrow";
-import { startServer, shortLength, APIResult } from "../src/server";
+import { startServer, shortLength, APISuccess, badURLReturn, noSuchParams, unknownParams, rootParams } from "../src/server";
 
 /** URL we will use to reference the server */
 let serverURL: string;
@@ -22,6 +22,7 @@ const defaultPort: number = 8081;
 
 /** Data to be used in our tests */
 const invalidShort: string = "kjfkj-23";
+let unknown1: string = "abcdef";
 const long1: string = "http://first.com/";
 const long2: string = "ftp://second.com";
 const long3: string = "https://third.co.uk/sub/dir";
@@ -79,7 +80,7 @@ describe("Server tests",  () => {
 
     it("returns result including expected text", (): Chai.PromisedAssertion =>
       expect(fetch(serverURL + "/").then((res: IResponse): Promise<string> => res.text()))
-        .to.eventually.contain("<h1>FreeCodeCamp Back End Exercise: URL shortener microservice</h1>"));
+        .to.eventually.contain(rootParams.title));
 
   });
 
@@ -91,16 +92,20 @@ describe("Server tests",  () => {
 
     it("returns result including expected test", (): Chai.PromisedAssertion =>
       expect(fetch(serverURL + "/" + invalidShort).then((res: IResponse) => res.text()))
-        .to.eventually.contain("Sorry"));
+        .to.eventually.contain(unknownParams.reason));
 
 });
 
   describe("Smoke tests", () => {
 
+    it("Following the unknown shortform  " + unknown1 + " gives expected message" , (): Chai.PromisedAssertion =>
+      expect(fetch(serverURL + "/" + unknown1).then((res: IResponse) => res.text()))
+        .to.eventually.contain(noSuchParams.reason));
+
     it("Creating a new shortened url for " + long1 + "gives valid short url", (): Promise<void> =>
       fetch(serverURL + "/new/" + long1)
         .then((res: IResponse) => res.json())
-        .then((r: APIResult) => {
+        .then((r: APISuccess) => {
           expect(r.original_url).to.equal(long1);
           expect(r).to.have.property("short_url");
           expect(r.short_url).to.match(new RegExp("/\\w{" + shortLength + "}$"));
@@ -145,21 +150,21 @@ describe("Server tests",  () => {
       fetch(serverURL + "/new/" + none1)
         .then((res: IResponse) => res.json())
         .then((r: any) => {
-          expect(r.error).to.equal("Wrong url format, make sure you have a valid protocol and real site.");
+          expect(r.error).to.equal(badURLReturn.error);
         }));
 
     it("Rejects new for the invalid url " + none2, (): Promise<void> =>
       fetch(serverURL + "/new/" + none2)
         .then((res: IResponse) => res.json())
         .then((r: any) => {
-          expect(r.error).to.equal("Wrong url format, make sure you have a valid protocol and real site.");
+          expect(r.error).to.equal(badURLReturn.error);
         }));
 
     it("Rejects new for the invalid url " + none3, (): Promise<void> =>
       fetch(serverURL + "/new/" + none3)
         .then((res: IResponse) => res.json())
         .then((r: any) => {
-          expect(r.error).to.equal("Wrong url format, make sure you have a valid protocol and real site.");
+          expect(r.error).to.equal(badURLReturn.error);
         }));
 
 
