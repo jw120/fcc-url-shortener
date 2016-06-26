@@ -25,9 +25,13 @@ Used .catch(asyncThrow) whenever evaluating a Promise
 * DONE Make invalid page prettier - include error messages?
 * DONE Check behaviour is what we want (and to spec) on different error types
 
-* TODO Add to heroku
-* TODO Get server name to work on heroku - including config variable to hold SERVER_URL (and support heroku local)
+* DONE Add to heroku
+* DONE Get server name to work on heroku - including config variable to hold SERVER_URL (and support heroku local)
+* DONE Make npm run deploy-test work again
+* DONE Clear heroku db
 
+* TODO Document that heroku does not get the DATABASE_NAME environment variable and therefore runs tests in the translation database
+* TODO Document how to modify heroku db
 * TODO Incorporoaret Howto notes on postgres and heroku into README or similar
 
 

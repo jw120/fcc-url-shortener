@@ -32,7 +32,7 @@
     "deploy:commit": "cd deploy; if [[ `git status --porcelain` ]]; then git add `find . -maxdepth 1 -type f` && git commit -m 'pushing updates from parent'; fi",
     "deploy:push": "cd deploy && git push heroku master",
     "deploy": "npm run deploy:commit && npm run deploy:push",
-    "deploy-test": "SERVER=https://`(cd deploy; heroku domains | tail +2  | head -n 1)` npm run test"
+    "deploy-test": "SERVER=https://`(cd deploy; heroku domains | tail +2  | head -n 1)` mocha --timeout 20000 test/*_spec.js"
   },
   "author": "JW",
   "license": "MIT",

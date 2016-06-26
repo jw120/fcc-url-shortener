@@ -46,6 +46,7 @@ describe("Server tests",  () => {
 
       serverURL = process.env.SERVER;
       serverToClose = null;
+      this.slow(5000);
       return Promise.resolve();
 
     } else {
