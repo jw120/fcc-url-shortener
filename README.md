@@ -6,76 +6,130 @@ Testing with Mocha, Chai/Expect and Fetch.
 
 Used .catch(asyncThrow) whenever evaluating a Promise
 
-## Plan of attack
 
-* DONE Get root page rendering with handlebars (to show nice urls to our app)
-* DONE Change root page rendering to use real example shortened URL
-* DONE Get working with a global variable instead of db
-* DONE Use debug instead of console
-* DONE pg -  Use basic pg only - with DIY Promises/helpers
-* DONE Server tests
-* DONE Use node-fetch instead of isomorphic? (as iso just calls node) - no (as node-fetch not TS friendly)
-* DONE Tidy server.ts and other files
-* DONE Think about making entries unique - should long's be unique?
-* DONE Add new url entry validation
-* DONE Migrate from typings to npm (are all available?)
-
-* DONE Add catches to server.ts? Catch a server in use error on startup
-* DONE Use asncthrow
-* DONE Make invalid page prettier - include error messages?
-* DONE Check behaviour is what we want (and to spec) on different error types
-
-* DONE Add to heroku
-* DONE Get server name to work on heroku - including config variable to hold SERVER_URL (and support heroku local)
-* DONE Make npm run deploy-test work again
-* DONE Clear heroku db
-
+* TOOD DO we ever use DATABASE_NAME? No - should have been tableName - now remove
 * TODO Document that heroku does not get the DATABASE_NAME environment variable and therefore runs tests in the translation database
 * TODO Document how to modify heroku db
 * TODO Incorporoaret Howto notes on postgres and heroku into README or similar
 
+## 1. Postgres
 
-## Ways to run
-
-### 1. From local src dir
-
-For use testing during development
+On macOS, postgres can be installed and started locally on the default port (`postgres://localhost:5432`) with
 
 ```bash
-npm run lint && npm run compile
-npm run src-start # To start the server (requires a running postgres server)
-npm run test # To run mocha tests (which does not require the server to be running)
+brew update && brew install postgres
+postgres -D /usr/local/var/postgres/
+createdb shortener
+createdb testdb
 ```
 
-### 2. From local deploy dir
+which also creates the two databases used.
 
-Intermediate step - makes a copy of the runtime files in deploy/ and runs them with our usual node
+## 2. Source directory
+
+To compile and test from the `src/` directory.
 
 ```bash
-npm run lint && npm run compile
-npm run build # Copies required files to deploy/
-npm run build-start # which does node deploy/index.js (requires a running postgres server)
-npm run build-test # runs mocha tests on a running build-start server
+npm run lint && npm run compile && npm run test
+```
+The test needs a postgres instance to be running locally
+(on the default port 5432) in which it wipes and uses the `testdb` database. The test creates and
+closes its own http server instance (on port 8081).
+
+To start the http server (on port 8085) for browser testing on `http://localhost:8085/`. This
+requires a local Postgres server to be running.
+
+```bash
+npm run src-start
 ```
 
-### 3. Heroku local
+## 3. Local deploy directory
 
-To test deployment before pushing to heroku
+After compiling, copy all of the runtime files to the `deploy/` directory
 
 ```bash
-npm run lint compile && npm run compile
 npm run build
-npm run local-install # which does npm install in the deploy directory
-npm run local-start # which does heroku local in the deploy directory
-npm run local-test # runs mocha tests on a running local-start server
 ```
 
-### 4. On Heroku
+To set up the `deploy` directory for use with heroku (assuming the heroku toolbelt is installed and you are logged in via `heroku login`)
+```bash
+cd deploy
+git init
+git add .gitignore *
+git commit -m "Initial"
+heroku create
+git push heroku master
+```
 
-Deployed version
+To test that the server works from the runtime files
+```bash
+npm run build-start
+```
 
+which can be tested (using both the http server and postgres server) with
+```bash
+npm run build-test
+``
+
+## 4. Heroku
+
+To use Postgres on Heroku and to provide the server with its URL for use on
+its root html page (the url shown is for my heroku app)
+```bash
+cd deploy
+heroku addons:create heroku-postgresql:hobby-dev
+heroku config:set SERVER_URL=https://warm-falls-32550.herokuapp.com
+```
+
+To deploy the code to heroku
 ```bash
 npm run deploy
-npm run deploy-test # runs mocha tests against the heroku remote version
 ```
+
+To test the app runnng on heroku
+```bash
+npm run deploy-test
+```
+
+
+## Maintenance and miscellaneous
+
+
+cd deploy
+heroku pg:psql
+> select * from translation;
+> delete from translation;
+
+    "local-logs": "cd deploy && heroku logs",
+
+    Using Postgresql on Mac
+
+```
+brew update && brew install postgres
+postgres -D /usr/local/var/postgres/
+```
+
+createdb shortener
+
+Default gives
+postgres://localhost:5432/shortener
+
+psql shortener (to connect to database automatically)
+\d+ shorts     (shows extended info for table shorts)
+select * from shorts; (see contents of shorts)
+
+SQL
+drop table shorts; (deletes the table)
+
+psql shortener -c "select * from shorts;"
+psql shortener -c "drop table shorts;"
+
+createdb testdb
+
+## Our config
+
+Database shortener
+Table   translation
+Fields  long
+Field   short
 

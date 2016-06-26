@@ -1,6 +1,5 @@
 node_modules/
 typings/
-old/
 deploy/
 src/*.js
 src/*.js.map
