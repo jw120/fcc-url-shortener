@@ -28,16 +28,16 @@ To compile and test from the `src/` directory.
 ```bash
 npm run lint && npm run compile && npm run test
 ```
-The test needs a postgres instance to be running locally
+The test needs a Postgres instance to be running locally
 (on the default port 5432) in which it wipes and uses the `testdb` database. The test creates and
 closes its own http server instance (on port 8081).
 
-To start the http server (on port 8085) for browser testing on `http://localhost:8085/`. This
-requires a local Postgres server to be running.
-
+To start the http server (on port 8085) for browser testing on `http://localhost:8085/`.
 ```bash
 npm run src-start
 ```
+which also requires the local Postgres server to be running.
+
 
 ## 3. Local deploy directory
 
@@ -89,17 +89,14 @@ npm run deploy-test
 
 ## Miscellaneous maintenance tips
 
-To re-create the deploy directory after wiping it (without re-creating another heroku app)
-```bash
-rm -fr deploy
-git clone https://git.heroku.com/warm-falls-32550.git deploy
-npm run build
-cd deploy
-git remote rename origin heroku
-```
+We use the `shortener` database as our main application database, and also the `testdb` database for
+local testing. These databases must be created before the application starts.
+
+Within each database we use only the `translation` table which the application creates if it is missing
 
 Databases can be manipulated using `psql shortener -c command` (for the local main datavase),
-`psql testdb -c command` (for the local test database) or `heroku pg:psql -c command` (for the remote heroku database, this needs to run from the `deploy/` directory).
+`psql testdb -c command` (for the local test database) or `heroku pg:psql -c command` (for the
+remote heroku database, this needs to run from the `deploy/` directory).
 
 Useful commands to use with `psql` include
 
@@ -107,6 +104,15 @@ Useful commands to use with `psql` include
 \d+ -- Show the tables in the database
 select * from translation;   -- Show the records in the translation table
 delete from translation; -- Delete the conmtents of the translation table
+```
+
+To re-create the deploy directory after wiping it (without re-creating another heroku app)
+```bash
+rm -fr deploy
+git clone https://git.heroku.com/warm-falls-32550.git deploy
+npm run build
+cd deploy
+git remote rename origin heroku
 ```
 
 Heroku logs can be see with
