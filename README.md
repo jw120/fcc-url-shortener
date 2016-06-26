@@ -1,20 +1,16 @@
 # FreeCodeCamp URL Shortener exercise
 
+Running on [Heroku](https://warm-falls-32550.herokuapp.com).
+
 Built around Express and Postgres. Also uses Handlebars and TypeScript.
-
-Testing with Mocha, Chai/Expect and Fetch.
-
-Used .catch(asyncThrow) whenever evaluating a Promise
-
-
-* TOOD DO we ever use DATABASE_NAME? No - should have been tableName - now remove
-* TODO Document that heroku does not get the DATABASE_NAME environment variable and therefore runs tests in the translation database
-* TODO Document how to modify heroku db
-* TODO Incorporoaret Howto notes on postgres and heroku into README or similar
+Testing with Mocha, Chai/Expect and fetch. Uses Promises extensively for the asynchronous
+calls to the database. Note that we have added
+`.catch(asyncThrow)` whenever evaluating a Promise to ensure that exceptions do not disappesr
+silently.
 
 ## 1. Postgres
 
-On macOS, postgres can be installed and started locally on the default port (`postgres://localhost:5432`) with
+On macOS, Postgres can be installed and started locally on the default port (`postgres://localhost:5432`) with
 
 ```bash
 brew update && brew install postgres
@@ -51,7 +47,8 @@ After compiling, copy all of the runtime files to the `deploy/` directory
 npm run build
 ```
 
-To set up the `deploy` directory for use with heroku (assuming the heroku toolbelt is installed and you are logged in via `heroku login`)
+To set up the `deploy` directory for use with heroku (assuming the heroku toolbelt is installed
+and you are logged in via `heroku login`)
 ```bash
 cd deploy
 git init
@@ -65,11 +62,10 @@ To test that the server works from the runtime files
 ```bash
 npm run build-start
 ```
-
 which can be tested (using both the http server and postgres server) with
 ```bash
 npm run build-test
-``
+```
 
 ## 4. Heroku
 
@@ -91,45 +87,30 @@ To test the app runnng on heroku
 npm run deploy-test
 ```
 
+## Miscellaneous maintenance tips
 
-## Maintenance and miscellaneous
-
-
+To re-create the deploy directory after wiping it (without re-creating another heroku app)
+```bash
+rm -fr deploy
+git clone https://git.heroku.com/warm-falls-32550.git deploy
+npm run build
 cd deploy
-heroku pg:psql
-> select * from translation;
-> delete from translation;
-
-    "local-logs": "cd deploy && heroku logs",
-
-    Using Postgresql on Mac
-
-```
-brew update && brew install postgres
-postgres -D /usr/local/var/postgres/
+git remote rename origin heroku
 ```
 
-createdb shortener
+Databases can be manipulated using `psql shortener -c command` (for the local main datavase),
+`psql testdb -c command` (for the local test database) or `heroku pg:psql -c command` (for the remote heroku database, this needs to run from the `deploy/` directory).
 
-Default gives
-postgres://localhost:5432/shortener
+Useful commands to use with `psql` include
 
-psql shortener (to connect to database automatically)
-\d+ shorts     (shows extended info for table shorts)
-select * from shorts; (see contents of shorts)
+```sql
+\d+ -- Show the tables in the database
+select * from translation;   -- Show the records in the translation table
+delete from translation; -- Delete the conmtents of the translation table
+```
 
-SQL
-drop table shorts; (deletes the table)
-
-psql shortener -c "select * from shorts;"
-psql shortener -c "drop table shorts;"
-
-createdb testdb
-
-## Our config
-
-Database shortener
-Table   translation
-Fields  long
-Field   short
+Heroku logs can be see with
+```bash
+cd deploy && heroku logs
+```
 
